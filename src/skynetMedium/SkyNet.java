@@ -7,6 +7,7 @@ package skynetMedium;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -39,6 +40,13 @@ public class SkyNet {
                 this.B = B;
             }
 
+            public Node other(Node x) {
+                if (A == x) {
+                    return B;
+                }
+                return A;
+            }
+
         }
 
         public static class PathToGate {
@@ -47,6 +55,26 @@ public class SkyNet {
         }
 
         public static class GameInput {
+
+            private List<Link> recShortPath(Node c, HashSet<Link> used) {
+                for (Link l : edge.get(c)) {
+                    List<Link> short
+                    =null;
+                    if (!used.contains(l)) {
+                        List<Link> curr = recShortPath(c, used);
+
+                    }
+                    used.add(l);
+
+                }
+            }
+
+            List<PathToGate> pathToGates() {
+                HashSet<Link> used = new HashSet<>();
+                List<PathToGate> res = new ArrayList<>(500);
+
+                return res;
+            }
 
             final int N;
             final int L;
