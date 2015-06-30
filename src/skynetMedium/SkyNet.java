@@ -17,8 +17,6 @@ public class SkyNet {
 
     public static class Input {
 
-        Node agentPos = null;
-
         public static class Node {
 
             final int id;
@@ -43,7 +41,12 @@ public class SkyNet {
 
         }
 
-        public static class GameInitInput {
+        public static class PathToGate {
+
+            List<Link> it = new ArrayList<>(500);
+        }
+
+        public static class GameInput {
 
             final int N;
             final int L;
@@ -52,7 +55,9 @@ public class SkyNet {
             final HashMap<Node, List<Link>> edge;
             final HashMap<Integer, Node> allNode;
 
-            public GameInitInput(int N, int L, int E) {
+            Node agentPos = null;
+
+            public GameInput(int N, int L, int E) {
                 this.N = N;
                 this.L = L;
                 this.E = E;
@@ -79,6 +84,10 @@ public class SkyNet {
 
             public void addGateWay(int N) {
                 allNode.get(N).isGateWay = true;
+            }
+
+            public void setAgent(int N) {
+                agentPos = allNode.get(N);
             }
 
         }
