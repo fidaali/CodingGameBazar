@@ -5,6 +5,9 @@
  */
 package thorGiantHard;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -29,17 +32,39 @@ public class ThorGiant {
                         dy = 1;
                     }
 
-                    dirocc[4] = true;
-
                     dirocc[(dx + 1) + 3 * (dy + 1)] = true;
                     //System.err.print("giant rel " + dx + " " + dy + " |");
                 }        
     }
+         
+         public static int findDirTo(int TX,int TY,int X,int Y){
+                    int dx = X - TX;
+                    int dy = Y - TY;
+                    if (dx < 0) {
+                        dx = -1;
+                    }
+                    if (dx > 0) {
+                        dx = 1;
+                    }
+                    if (dy < 0) {
+                        dy = -1;
+                    }
+                    if (dy > 0) {
+                        dy = 1;
+                    }
+                    return (dx + 1) + 3 * (dy + 1);          
+             
+         }
 
     public static void main(String args[]) {
+        Random rand=new Random(0x4AF711^0x48855FF9^0x1199588 );
+        
         Scanner in = new Scanner(System.in);
         int TX = in.nextInt();
         int TY = in.nextInt();
+        
+        int MAPCX=40/2;
+        int MAPCY=18/2;
 
         int t = 0;
         // game loop
@@ -94,12 +119,11 @@ public class ThorGiant {
                     countGiantToDie++;
                 }
                 
-                
-                for(int ix=-2;ix<5;ix++){
-                    for(int jx=-2;jx<5;jx++){
+                for(int ix=-1;ix<2;ix++){
+                    for(int jx=-1;jx<2;jx++){
                         mark(dirocc,TX,TY,X+ix,Y+jx);
                     }
-                }       
+                }                
                 System.err.println("Giant at " + X + " " + Y);
             }
 
@@ -113,26 +137,53 @@ public class ThorGiant {
                 }
                 System.err.println();
             }
-            if (dirocc[4] == false) {
-                System.out.println("WAIT"); // The movement or action to be carried out: WAIT STRIKE N NE E SE S SW W or N
-            } else {
+            
+            
+            int dirCenter1=findDirTo(TX, TY, MAPCX, MAPCY);
+            int dirCenter2=findDirTo(TX, TY, MAPCX, MAPCY*2-1);
+            if (dirocc[dirCenter1] == false) {
+                int pick=dirCenter1;
+                            int k = pick % 3;
+                            int l = pick / 3;
+                            TX += k - 1;
+                            TY += l - 1;                        
+                        
+                        System.out.println(dirS[pick]);                
+            } else
+            if (dirocc[dirCenter2] == false) {
+                int pick=dirCenter2;
+                            int k = pick % 3;
+                            int l = pick / 3;
+                            TX += k - 1;
+                            TY += l - 1;                        
+                        
+                        System.out.println(dirS[pick]);                
+            } else            
+            {
                 if (countGiantToDie >= giantPerHam) {
                     System.out.println("STRIKE");
                 } else {
 
                     boolean found=false;
+                    List<Integer> possible=new ArrayList<Integer>();
                     for (int i = 0; i < 9; i++) {
                         if (dirocc[i] == false) {
-
-                            int k = i % 3;
-                            int l = i / 3;
-                            TX += k - 1;
-                            TY += l - 1;
-                            System.out.println("" + dirS[i]);
                             found=true;
-                            break;
+                            possible.add(i);
                         }
                     }
+                    if(found){
+                        int r=rand.nextInt()&0xFFFF;
+                        int pick=possible.get(r%possible.size());
+                            int k = pick % 3;
+                            int l = pick / 3;
+                            TX += k - 1;
+                            TY += l - 1;                        
+                        
+                        System.out.println(dirS[pick]);
+                    }
+                    
+                    
                     if(!found){
                         System.out.println("STRIKE");
                         System.err.println("NO ESCAPE FOUND");
