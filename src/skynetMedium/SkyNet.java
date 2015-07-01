@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  *
@@ -26,6 +27,13 @@ public class SkyNet {
 
             public Node(int id) {
                 this.id = id;
+                
+                
+            }
+
+            @Override
+            public String toString() {
+                return "N{" + "" + id + ", " + isGateWay + '}';
             }
 
         }
@@ -38,10 +46,17 @@ public class SkyNet {
             public Link(Node A, Node B) {
                 this.A = A;
                 this.B = B;
+                
+                
+            }
+
+            @Override
+            public String toString() {
+                return "{" + "" + A + ", " + B +""+ '}';
             }
 
             public Node other(Node x) {
-                if (A == x) {
+                if (A.id == x.id) {
                     return B;
                 }
                 return A;
@@ -52,26 +67,63 @@ public class SkyNet {
         public static class PathToGate {
 
             List<Link> it = new ArrayList<>(500);
+
+            public PathToGate() {
+            }
+
+            public PathToGate(List<Link> it) {
+                this.it.addAll(it);
+            }
+
+            @Override
+            public String toString() {
+                return "PathToGate{" + "it=" + it + '}';
+            }
+
+            
         }
 
         public static class GameInput {
 
-            private List<Link> recShortPath(Node c, HashSet<Link> used) {
-                for (Link l : edge.get(c)) {
-                    List<Link> short
-                    =null;
-                    if (!used.contains(l)) {
-                        List<Link> curr = recShortPath(c, used);
-
-                    }
-                    used.add(l);
-
+            private List<Link> recShortPath(Node c, HashSet<Node> used) {
+                if (c.isGateWay) {
+                    return new ArrayList<>();
                 }
+                used.add(c);                
+
+                List<Link> freeEdge = new ArrayList<>(20);
+                Link toSh = null;
+                
+                //System.err.println(""+c+" edged "+edge.get(c));
+                for (Link l : edge.get(c)) {
+                    if (!used.contains(l.other(c))) {
+                        freeEdge.add(l);
+                    }
+                    //System.err.println(""+used);
+                }
+                List<Link> shortl = null;
+                for (Link l : freeEdge) {
+
+                    List<Link> curr = recShortPath(l.other(c), used);
+                    if (!(curr==null) && (shortl == null || shortl.size() > curr.size())) {
+                            shortl = curr;
+                            toSh = l;
+                    }
+                }
+                if (shortl != null) {
+                    shortl.add(0,toSh);
+                }
+                //System.err.println(""+shortl);
+                return shortl;
             }
 
-            List<PathToGate> pathToGates() {
-                HashSet<Link> used = new HashSet<>();
+            public List<PathToGate> pathToGates() {
+                HashSet<Node> used = new HashSet<>();
                 List<PathToGate> res = new ArrayList<>(500);
+
+                    List<Link> s = recShortPath(agentPos, used);
+                    PathToGate p = new PathToGate(s);
+                    res.add(p);
 
                 return res;
             }
@@ -120,6 +172,42 @@ public class SkyNet {
 
         }
 
+    }
+    
+    public static void  main(String args[]){
+        Scanner in = new Scanner(System.in);
+        int N = in.nextInt(); // the total number of nodes in the level, including the gateways
+        int L = in.nextInt(); // the number of links
+        int E = in.nextInt(); // the number of exit gateways
+        
+        Input.GameInput ing=new Input.GameInput(N, L, E);
+        
+        for (int i = 0; i < L; i++) {
+            int N1 = in.nextInt(); // N1 and N2 defines a link between these nodes
+            int N2 = in.nextInt();
+            System.err.println("Link "+N1+" "+N2);
+            ing.addLinkDescr(N1, N2);
+        }
+        for (int i = 0; i < E; i++) {
+            int EI = in.nextInt(); // the index of a gateway node
+            ing.addGateWay(EI);
+        }
+
+        // game loop
+        while (true) {
+            int SI = in.nextInt(); // The index of the node on which the Skynet agent is positioned this turn
+            ing.setAgent(SI);
+
+            // Write an action using System.out.println()
+            // To debug: System.err.println("Debug messages...");
+            
+            List<SkyNet.Input.PathToGate> path=ing.pathToGates();
+
+            Input.Link last=path.get(path.size()-1).it.get(path.get(path.size()-1).it.size()-1);
+            System.out.println(""+last.A.id+" "+last.B.id); // Example: 0 1 are the indices of the nodes you wish to sever the link between
+        }        
+        
+        
     }
 
 }
