@@ -1,0 +1,55 @@
+(ns Player
+  (:gen-class))
+
+(defn err [& out]
+ (binding [*out* *err*]
+  (apply print out))   
+    (binding [*out* *err*] (println))
+)
+
+(defn rlineTest [height]
+ (loop [ h height acc [] ]
+    (if(= h 0) acc
+        (
+            recur (- h 1) (conj acc h)
+        )
+    )
+ )
+    
+)
+(defn boolit [st]
+    (reverse (seq st))
+    )
+
+(defn rline [height]
+ (loop [ h height acc [] ]
+    (if(= h 0) (reverse acc)
+        (
+            recur (- h 1) (conj acc (boolit (read-line)) )
+        )
+    )
+ )
+
+)
+
+; Don't let the machines win. You are humanity's last hope...
+(defn entrypoint []
+   (do
+   ; (println "my fun")  
+    (def width (read))
+    (def height (read))
+    (read-line)
+    (err "my fun")  
+    (err "width=" width " " "height=" height )    
+    (err (rlineTest height))
+    (err (rline height))
+   )
+    
+)
+
+(defn -main [& args]
+    (entrypoint)
+
+    
+    ; Three coordinates: a node, its right neighbor, its bottom neighbor
+    (println "0 0 1 0 0 1"))
