@@ -15,7 +15,7 @@
         )
     )
  )
-    
+
 )
 
 (defn mapCtoBool [c]
@@ -39,8 +39,39 @@
 
 )
 
-(defn coord [height width] 
+(defn coord [width height ll] 
+     (loop [w width acc []]
+           
+           )(loop [w width acc []]
+        (if (= w 0) (reverse acc)
+            (
+                recur (- w 1) (conj acc 
+                                    (
+                                        if (nth ll (- w 1))
+                                            [(- width w) height]
+                                            nil
+                                        
+                                    
+                                    )
+                )
+            )
+        )
+     )
+)
 
+(defn allcoord [width heigh ll]
+       (loop [h heigh acc []]
+            (if (= h 0) acc
+                (
+                    recur (- h 1) (conj  acc
+                                        (coord width (- h 1) (nth ll (- heigh h))
+                                        )
+                                    
+                                        
+                                    )
+                )
+            )             
+       )
 )
 
 ; Don't let the machines win. You are humanity's last hope...
@@ -53,7 +84,12 @@
     (err "my fun")  
     (err "width=" width " " "height=" height )    
     (err (rlineTest height))
-    (err (rline height))
+    (def rl (rline height))
+    (err rl)
+    (err (first rl))
+    (err (nth (first rl) 1))
+    (err (allcoord width height rl))
+    (def invco (allcoord width height rl))
    )
     
 )
