@@ -17,9 +17,16 @@
  )
     
 )
+
+(defn mapCtoBool [c]
+    (if (= c \.) false true)
+)
+
 (defn boolit [st]
-    (reverse (seq st))
+    (map mapCtoBool
+         (reverse (seq st))
     )
+)
 
 (defn rline [height]
  (loop [ h height acc [] ]
@@ -29,6 +36,10 @@
         )
     )
  )
+
+)
+
+(defn coord [height width] 
 
 )
 
