@@ -170,7 +170,246 @@
     
 )
 
+(defn -main [& args](ns Player
+  (:gen-class))
+
+(def STC 99)
+
+(defn err [& out]
+ (binding [*out* *err*]
+  (apply print out))   
+    (binding [*out* *err*] (println))
+)
+
+(defn rlineTest [height]
+ (loop [ h height acc [] ]
+    (if(= h 0) acc
+        (
+            recur (- h 1) (conj acc h)
+        )
+    )
+ )
+
+)
+
+(defn mapCtoBool [c]
+    (if (= c \.) false true)
+)
+
+(defn boolit [st]
+    (map mapCtoBool
+         (reverse (seq st))
+    )
+)
+
+(defn rline [height]
+ (loop [ h height acc [] ]
+    (if(= h 0) (reverse acc)
+        (
+            recur (- h 1) (conj acc (boolit (read-line)) )
+        )
+    )
+ )
+
+)
+
+(defn compCoord [c d]
+    (let [[c1 c2] c [d1 d2] d]
+       ; (err c1 c2 d1 d2)
+        (
+            if (> c2 d2) d 
+            (if (< c2 d2) c
+                (if (> c1 d1) d 
+                    (if (< c1 d1) c d
+                       
+                    )
+                )               
+            )
+        )
+    )
+)
+
+(defn coord [width height ll] 
+     (loop [w width acc []]
+           
+           )(loop [w width acc []]
+        (if (= w 0) (reverse acc)
+            (
+                recur (- w 1) (conj acc 
+                                    (
+                                        if (nth ll (- w 1))
+                                            [(- width w) height]
+                                            [STC,STC]
+                                        
+                                    
+                                    )
+                )
+            )
+        )
+     )
+)
+
+(defn allcoord [width heigh ll]
+       (loop [h heigh acc []]
+            (if (= h 0) acc
+                (
+                    recur (- h 1) (conj  acc
+                                        (coord width (- h 1) (nth ll (- heigh h))
+                                        )
+                                    
+                                        
+                                    )
+                )
+            )             
+       )
+)
+
+(defn underfirst [last curr]
+    ;(def curr (nth all numline))
+    
+    ;(err "conj them underfirst "
+         ;last all numline
+    (for [l last c curr]
+         [l c]
+    )
+    (map compCoord last curr)
+    ;)
+)
+
+(defn rightfirst [curr]
+
+    (reverse(loop [c (vector STC STC) ca curr acc []]
+             (if (empty? ca) acc
+                (recur (compCoord c (first ca)) (rest ca) (cons c acc))
+                 
+             )
+    ))
+
+)
+
+(defn solAll [all width]
+    (loop [l all curr (repeat width (vector STC STC)) acc (vector)]
+          ;(err "\n")
+          ;(err curr)
+           (if (empty? l)
+               ;then
+                acc
+               ;else
+               (recur
+                     (rest l) 
+                        ;curr
+                        (underfirst curr (first l))
+                        
+                    (conj acc 
+                           ;(
+                        ;       first l
+                        ;    )
+                        ;curr
+                        ;(rightfirst (first l))
+                        (map (fn [a b c] (vector a b c) )
+                                 (first l)
+                                 (rightfirst (first l))
+                                 curr
+                        )
+                    )
+                )
+            )
+    )
+)
+
+(defn transPoint [it]
+    (into [] (for [cc it :let [[x y] cc] ] 
+            (if (= x STC) (vector -1 -1) cc)     
+        )
+    )
+)
+
+(defn filterResult [it]
+    (for [line it]
+        (for [point line :let [[[x _][_ _][_ _]] point] :when (not= x STC)]
+            (transPoint point)
+        )
+    )
+)
+
+(defn flattenResult [it]
+    (for [line it]
+        (for [point line :let [ [[a b][c d][e f]] point ] ]
+            (vector a b c d e f)
+        )
+    )
+)
+
+
+(defn printPointList [it]
+    (loop [all it] 
+          (if (empty? all) ()
+              (let [[a b c d e f] (first all)]
+                    (println a b c d e f )
+              )
+          )          
+
+          (if (empty? all) ()
+            (recur (rest all))
+          )
+    )    
+)
+
+(defn printResult [it]
+    (loop [all it] 
+          (printPointList (reverse (first all)))
+          (if (empty? all) ()
+            (recur (rest all))
+          )
+    )
+)
+
+; Don't let the machines win. You are humanity's last hope...
+(defn entrypoint []
+   (do
+   ; (println "my fun")  
+    (def width (read))
+    (def height (read))
+    (read-line)
+    (def rl (rline height))
+    (err "width=" width " " "height=" height )        
+    (err rl)    
+    (def invco (allcoord width height rl))    
+    (err invco)
+    
+    ;-----------------------------
+    
+    ;(err (map rightfirst invco))    
+    (err "unfiltered" (solAll invco width)) 
+    (def filtered (flattenResult (filterResult (solAll invco width))))
+    (err "filtered"   filtered)
+    
+    (printResult (reverse filtered))
+
+   ; (err (rlineTest height))
+
+  ;  (err (first rl))
+  ;  (err (nth (first rl) 1))
+  ;  (err (allcoord width height rl))
+
+  ;  (underfirst '([-1 -1] [-1 -1] [-1 -1]) (vector '([1 1] [2 2] [3 3]))  0)
+  ;  (err (compCoord  (vector -1 -1) (vector 3 5))  )
+    ;([-1 -1] [-1 -1] [-1 -1]) ([1 1] [2 2] [3 3])
+   ; (err (list [1 1] [-1 -1] [3 3]))
+  ;  (err ( rightfirst (list [1 1] [-1 -1] [3 3])))
+  ;  (err (map rightfirst (list [1 1] [2 2] [3 3])))
+   )
+    
+)
+
 (defn -main [& args]
+    (entrypoint)
+
+    
+    ; Three coordinates: a node, its right neighbor, its bottom neighbor
+    ;(println "0 0 1 0 0 1")
+    
+    )
     (entrypoint)
 
     
