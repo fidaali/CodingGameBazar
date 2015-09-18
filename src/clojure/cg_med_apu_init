@@ -39,6 +39,22 @@
 
 )
 
+(defn compCoord [c d]
+    (let [[c1 c2] c [d1 d2] d]
+       ; (err c1 c2 d1 d2)
+        (
+            if (< c1 d1) d 
+            (if (> c1 d1) c
+                (if (< c2 d2) d 
+                    (if (> c2 d2) c d
+                       
+                    )
+                )               
+            )
+        )
+    )
+)
+
 (defn coord [width height ll] 
      (loop [w width acc []]
            
@@ -49,7 +65,7 @@
                                     (
                                         if (nth ll (- w 1))
                                             [(- width w) height]
-                                            nil
+                                            [-1,-1]
                                         
                                     
                                     )
@@ -74,6 +90,52 @@
        )
 )
 
+(defn underfirst [last curr]
+    ;(def curr (nth all numline))
+    
+    ;(err "conj them underfirst "
+         ;last all numline
+    (for [l last c curr]
+         [l c]
+    )
+    ;)
+)
+
+(defn rightfirst [curr]
+
+    (reverse(loop [c (vector -1 -1) ca curr acc []]
+             (if (empty? ca) acc
+                (recur (compCoord c (first ca)) (rest ca) (cons c acc))
+                 
+             )
+    ))
+
+)
+
+(defn solAll [all width]
+    (loop [l all curr (repeat width (vector -1 -1)) acc (vector)]
+          ;(err "\n")
+          ;(err curr)
+           (if (empty? l)
+               ;then
+                acc
+               ;else
+               (recur
+                     (rest l) 
+                        curr
+                        ;(underfirst curr (first l))
+                        
+                     (conj acc 
+                           ( ; map vector coord right down
+                               first l
+                               ) 
+                           )
+                )
+            )
+    )
+    
+)
+
 ; Don't let the machines win. You are humanity's last hope...
 (defn entrypoint []
    (do
@@ -81,15 +143,29 @@
     (def width (read))
     (def height (read))
     (read-line)
-    (err "my fun")  
-    (err "width=" width " " "height=" height )    
-    (err (rlineTest height))
     (def rl (rline height))
-    (err rl)
-    (err (first rl))
-    (err (nth (first rl) 1))
-    (err (allcoord width height rl))
-    (def invco (allcoord width height rl))
+    (err "width=" width " " "height=" height )        
+    (err rl)    
+    (def invco (allcoord width height rl))    
+    (err invco)  
+    
+    ;-----------------------------
+    
+    ;(err (map rightfirst invco))    
+    (err (solAll invco width)) 
+
+   ; (err (rlineTest height))
+
+  ;  (err (first rl))
+  ;  (err (nth (first rl) 1))
+  ;  (err (allcoord width height rl))
+
+  ;  (underfirst '([-1 -1] [-1 -1] [-1 -1]) (vector '([1 1] [2 2] [3 3]))  0)
+  ;  (err (compCoord  (vector -1 -1) (vector 3 5))  )
+    ;([-1 -1] [-1 -1] [-1 -1]) ([1 1] [2 2] [3 3])
+   ; (err (list [1 1] [-1 -1] [3 3]))
+  ;  (err ( rightfirst (list [1 1] [-1 -1] [3 3])))
+  ;  (err (map rightfirst (list [1 1] [2 2] [3 3])))
    )
     
 )
